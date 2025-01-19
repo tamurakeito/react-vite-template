@@ -1,3 +1,0 @@
-[submodule "src/view/ui"]
-	path = src/view/ui
-	url = git@github.com:tamurakeito/react-atomic-ui.git

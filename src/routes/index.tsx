@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
-import Home from "@/view/pages/home";
-import SignIn from "@/view/pages/sign-in";
-import SignUp from "@/view/pages/sign-up";
+import { Home } from "@/view/pages/home";
+import { SignIn } from "@/view/pages/sign-in";
+import { SignUp } from "@/view/pages/sign-up";
 
 export const RouteSelector = () => {
   return (

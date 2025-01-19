@@ -1,0 +1,12 @@
+@use "assets/scss/config/variables" as var;
+
+.home {
+  margin: 100px;
+  .container {
+    margin: 10px;
+  }
+  .button {
+    margin: 10px auto;
+    width: 120px;
+  }
+}

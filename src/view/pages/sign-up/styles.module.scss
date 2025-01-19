@@ -1,0 +1,20 @@
+@use "assets/scss/config/variables" as var;
+
+.sign_up {
+  margin: 100px;
+  .container {
+    margin: 10px 0;
+  }
+  input {
+    border: 1px solid var.$GRAY_800;
+    padding: 0 6px;
+    color: var.$GRAY_800;
+    &::placeholder {
+      color: var.$GRAY_600;
+    }
+  }
+  .button {
+    margin: 0 auto;
+    min-width: 100px;
+  }
+}
