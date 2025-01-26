@@ -8,7 +8,7 @@ import {
 import { checkIsErrorResponse } from "@/data/utils/typeGuards";
 import { useAuthContext } from "@/providers/auth-provider";
 import { handleUnexpectedError } from "@/data/utils/handleErrors";
-import { setToast, toastTypes } from "@/components/toast";
+import { setToast, toastTypes } from "@/view/organisms/toast";
 import { useNavigate } from "react-router-dom";
 import {
   Button,

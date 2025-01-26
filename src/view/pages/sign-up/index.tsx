@@ -10,7 +10,7 @@ import {
   Text,
   textSizes,
 } from "tamurakeito-react-ui";
-import { setToast, toastTypes } from "@/components/toast";
+import { setToast, toastTypes } from "@/view/organisms/toast";
 import {
   checkIsSignUpResponse,
   PostSignUp,

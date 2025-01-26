@@ -1,0 +1,22 @@
+{
+  "hello-world": {
+    "id": 1,
+    "hello": {
+      "id": 1,
+      "name": "hello, world!",
+      "tag": true
+    }
+  },
+  "sign-in": {
+    "id": 0,
+    "user_id": "user",
+    "name": "たむら けいと",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzEwNDM3NTUsInVzZXJJZCI6InVzZXIifQ.7gEEymKDjHBiGuYvnK46kDVR0ih_jNiI8-ptMuf3nSw"
+  },
+  "sign-up": {
+    "id": 0,
+    "user_id": "user",
+    "name": "たむら けいと（sign up）",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzEwNDM3NTUsInVzZXJJZCI6InVzZXIifQ.7gEEymKDjHBiGuYvnK46kDVR0ih_jNiI8-ptMuf3nSw"
+  }
+}

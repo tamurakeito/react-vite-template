@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "jsv": "npx json-server --watch json-server/db.json --routes json-server/routes.json --middlewares json-server/middleware.cjs --port 3004"
   },
   "dependencies": {
     "axios": "^1.7.9",
@@ -27,6 +28,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
+    "json-server": "^0.17.3",
     "sass": "^1.83.4",
     "tamurakeito-react-ui": "../tamurakeito-react-ui",
     "typescript": "~5.6.2",
