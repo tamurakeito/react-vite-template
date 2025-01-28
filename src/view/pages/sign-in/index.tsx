@@ -1,13 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import classes from "./styles.module.scss";
-import {
-  checkIsSignInResponse,
-  PostSignIn,
-  postSignInErrors,
-} from "@/data/api/postSignin";
-import { checkIsErrorResponse } from "@/data/utils/typeGuards";
-import { useAuthContext } from "@/providers/auth-provider";
-import { handleUnexpectedError } from "@/data/utils/handleErrors";
 import { setToast, toastTypes } from "@/view/organisms/toast";
 import { useNavigate } from "react-router-dom";
 import {
@@ -20,6 +12,9 @@ import {
   textColors,
   textSizes,
 } from "tamurakeito-react-ui";
+import { useAuthContext } from "@/view/providers/auth-provider";
+import { AuthUsecase } from "@/usecase/auth";
+import { container } from "tsyringe";
 
 export const SignIn = () => {
   const idRef = useRef<HTMLInputElement | null>(null);
@@ -29,6 +24,7 @@ export const SignIn = () => {
   const { user, signIn, signOut } = useAuthContext();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const authUsecase = container.resolve(AuthUsecase);
 
   useEffect(() => {
     idRef.current?.focus();
@@ -54,33 +50,20 @@ export const SignIn = () => {
       return;
     }
 
-    const result = await PostSignIn(id, pass);
+    const result = await authUsecase.signIn({
+      userId: id,
+      password: pass,
+    });
 
-    if (checkIsSignInResponse(result)) {
-      signIn(result.id, result.user_id, result.name, result.token);
+    if (result.isSuccess) {
+      const data = result.data;
+      signIn(data!.id, data!.userId, data!.name, data!.token);
       setId("");
       setPass("");
-      setToast("サインインしました", toastTypes.success);
+      setToast("ログインしました", toastTypes.success);
       navigate("/");
-    } else if (checkIsErrorResponse(result)) {
-      switch (result.error) {
-        case postSignInErrors.unauthorized:
-          setToast("パスワードが間違っています", toastTypes.error);
-          break;
-        case postSignInErrors.notFound:
-          setToast("ユーザーが見つかりませんでした", toastTypes.error);
-          break;
-        case postSignInErrors.internalServerError:
-          setToast(
-            "サーバーで問題が発生しました. 時間を置いて再度お試しください.",
-            toastTypes.error
-          );
-          break;
-        default:
-          handleUnexpectedError();
-      }
     } else {
-      handleUnexpectedError();
+      setToast("ログインできません", toastTypes.error);
     }
     setIsLoading(false);
     return;
@@ -89,7 +72,7 @@ export const SignIn = () => {
     signOut();
     setId("");
     setPass("");
-    setToast("サインアウトしました");
+    setToast("ログアウトしました");
   };
 
   return (

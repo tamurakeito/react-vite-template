@@ -8,6 +8,9 @@ import {
   Icon,
   iconTypes,
 } from "tamurakeito-react-ui";
+import { setToast, toastTypes } from "@/view/organisms/toast";
+import { container } from "tsyringe";
+import { HelloWorldUsecase } from "@/usecase/example";
 
 export const Home = () => {
   return (
@@ -26,20 +29,14 @@ const HelloWorldButton = ({ id }: { id: number }) => {
   const [isLoading, setIsLoading] = useState(false);
   const handleHelloworld = async (id: number) => {
     await setIsLoading(true);
-    // const result = await GetHelloworld(id);
-    // if (checkIsHelloworldResponse(result)) {
-    //   setToast(`${result.id}: ${result.hello.name}`);
-    // } else if (checkIsErrorResponse(result)) {
-    //   switch (result.error) {
-    //     case getHelloworldErrors.notFound:
-    //       setToast("データが見つかりません", toastTypes.error);
-    //       break;
-    //     default:
-    //       handleUnexpectedError();
-    //   }
-    // } else {
-    //   handleUnexpectedError();
-    // }
+    const helloWorldUsecase = container.resolve(HelloWorldUsecase);
+    const result = await helloWorldUsecase.fetchHelloWorldDetail(id);
+    if (result.isSuccess) {
+      const data = result.data;
+      setToast(`${data!.id}: ${data!.hello.name}`, toastTypes.success);
+    } else {
+      setToast("データが見つかりません", toastTypes.error);
+    }
     setIsLoading(false);
     return;
   };

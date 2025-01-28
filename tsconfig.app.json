@@ -26,7 +26,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "experimentalDecorators": true, // デコレーターの有効化
+    "emitDecoratorMetadata": true // メタデータの生成 (DIで必要)
   },
   "include": ["src"]
 }

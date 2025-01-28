@@ -11,14 +11,9 @@ import {
   textSizes,
 } from "tamurakeito-react-ui";
 import { setToast, toastTypes } from "@/view/organisms/toast";
-import {
-  checkIsSignUpResponse,
-  PostSignUp,
-  postSignUpErrors,
-} from "@/data/api/postSignup";
-import { useAuthContext } from "@/providers/auth-provider";
-import { checkIsErrorResponse } from "@/data/utils/typeGuards";
-import { handleUnexpectedError } from "@/data/utils/handleErrors";
+import { useAuthContext } from "@/view/providers/auth-provider";
+import { container } from "tsyringe";
+import { AuthUsecase } from "@/usecase/auth";
 
 export const SignUp = () => {
   const idRef = useRef<HTMLInputElement | null>(null);
@@ -30,6 +25,7 @@ export const SignUp = () => {
   const { signIn } = useAuthContext();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const authUsecase = container.resolve(AuthUsecase);
 
   useEffect(() => {
     idRef.current?.focus();
@@ -59,40 +55,22 @@ export const SignUp = () => {
       return;
     }
 
-    const result = await PostSignUp(id, pass, name);
+    const result = await authUsecase.signUp({
+      userId: id,
+      password: pass,
+      name: name,
+    });
 
-    if (checkIsSignUpResponse(result)) {
-      signIn(result.id, result.user_id, result.name, result.token);
+    if (result.isSuccess) {
+      const data = result.data;
+      signIn(data!.id, data!.userId, data!.name, data!.token);
       setId("");
       setName("");
       setPass("");
       setToast("アカウントが登録されました", toastTypes.success);
       navigate("/");
-    } else if (checkIsErrorResponse(result)) {
-      switch (result.error) {
-        case postSignUpErrors.badRequest:
-          setToast(
-            "ユーザーIDまたはパスワードの形式が正しくありません",
-            toastTypes.error
-          );
-          break;
-        case postSignUpErrors.conflict:
-          setToast(
-            "既に登録されているIDのため使用できません",
-            toastTypes.error
-          );
-          break;
-        case postSignUpErrors.internalServerError:
-          setToast(
-            "サーバーで問題が発生しました. 時間を置いて再度お試しください.",
-            toastTypes.error
-          );
-          break;
-        default:
-          handleUnexpectedError();
-      }
     } else {
-      handleUnexpectedError();
+      setToast("アカウントが登録できませんでした", toastTypes.error);
     }
     setIsLoading(false);
     return;
