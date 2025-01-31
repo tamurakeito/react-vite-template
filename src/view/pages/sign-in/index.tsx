@@ -56,6 +56,10 @@ export const SignIn = () => {
 
     if (result.isSuccess) {
       const data = result.data;
+      console.log(`id: ${data!.id}`);
+      console.log(`userId: ${data!.userId}`);
+      console.log(`name: ${data!.name}`);
+      console.log(`token: ${data!.token}`);
       signIn(data!.id, data!.userId, data!.name, data!.token);
       setId("");
       setPass("");

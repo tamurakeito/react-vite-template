@@ -1,9 +1,10 @@
 import React, { ReactNode, useContext, useEffect } from "react";
-import useLocalStorage, {
+import {
+  useLocalStorage,
   tokenStorageKey,
   userStorageKey,
-} from "@hooks/useLocalStrage";
-import { useNavigate } from "react-router-dom";
+} from "@view/hooks/useLocalStrage";
+import { useLocation } from "react-router-dom";
 import { User } from "@domain/entity/auth";
 
 type AuthContextType = {
@@ -46,12 +47,11 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // redirect to signin
-  const navigation = useNavigate();
   useEffect(
     () => {
       // ログインしていない場合
-      const userUser = user?.userId || undefined;
-      if (!userUser) {
+      if (!user?.userId) {
+        if (token) return;
         signOut();
       }
 
@@ -62,18 +62,25 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         signOut();
       }
 
-      // /sign-in, /sign-up のパスへ移動した際にアカウントクリアする
-      if (
-        window.location.pathname.indexOf("/sign-in") === 0 ||
-        window.location.pathname.indexOf("/sign-up") === 0
-      ) {
-        signOut();
-      }
-
       // トークンが無効である場合
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [user, token, navigation]
+    [user, token]
+  );
+
+  const location = useLocation();
+
+  useEffect(
+    () => {
+      if (
+        location.pathname.startsWith("/sign-in") ||
+        location.pathname.startsWith("/sign-up")
+      ) {
+        signOut();
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [location.pathname]
   );
 
   return (
