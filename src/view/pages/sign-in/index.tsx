@@ -14,6 +14,7 @@ import {
 } from "tamurakeito-react-ui";
 import { useAuthContext } from "@providers/auth-provider";
 import { useApiContext } from "@providers/api-provider";
+import { HttpError } from "@domain/errors";
 
 export const SignIn = () => {
   const idRef = useRef<HTMLInputElement | null>(null);
@@ -56,17 +57,24 @@ export const SignIn = () => {
 
     if (result.isSuccess) {
       const data = result.data;
-      console.log(`id: ${data!.id}`);
-      console.log(`userId: ${data!.userId}`);
-      console.log(`name: ${data!.name}`);
-      console.log(`token: ${data!.token}`);
       signIn(data!.id, data!.userId, data!.name, data!.token);
       setId("");
       setPass("");
       setToast("ログインしました", toastTypes.success);
       navigate("/");
     } else {
-      setToast("ログインできません", toastTypes.error);
+      const err = result.error;
+      if (err == HttpError.notFound) {
+        setToast(
+          "アカウントが存在しないか、またはパスワードが一致しません。",
+          toastTypes.error
+        );
+      } else {
+        setToast(
+          result.error ? result.error?.message : HttpError.unknownError.message,
+          toastTypes.error
+        );
+      }
     }
     setIsLoading(false);
     return;

@@ -12,7 +12,6 @@ client.interceptors.request.use(
   (config) => {
     // カスタムプロパティを確認
     if (config.headers && config.headers["Add-Authorization"] === "true") {
-      // const token = localStorage.getItem(tokenStorageKey);
       const token = localStorage
         .getItem(tokenStorageKey)
         ?.replace(/^"|"$/g, "");

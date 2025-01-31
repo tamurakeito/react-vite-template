@@ -10,6 +10,7 @@ import {
 } from "tamurakeito-react-ui";
 import { setToast, toastTypes } from "@organisms/toast";
 import { useApiContext } from "@providers/api-provider";
+import { HttpError } from "@domain/errors";
 
 export const Home = () => {
   return (
@@ -35,7 +36,11 @@ const HelloWorldButton = ({ id }: { id: number }) => {
       const data = result.data;
       setToast(`${data!.id}: ${data!.hello.name}`, toastTypes.success);
     } else {
-      setToast("データが見つかりません", toastTypes.error);
+      const err = result.error;
+      setToast(
+        err ? err?.message : HttpError.unknownError.message,
+        toastTypes.error
+      );
     }
     setIsLoading(false);
     return;

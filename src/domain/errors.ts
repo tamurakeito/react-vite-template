@@ -9,18 +9,29 @@ export class Err {
 
 // エラーメッセージ定義
 export class ErrMessages {
-  static readonly badRequest = "Request was invalid";
-  static readonly unauthorized = "Not authorized to access";
-  static readonly forbidden = "Access to this resource is forbidden";
-  static readonly notFound = "Data not found";
-  static readonly conflict = "Resource conflict";
-  static readonly internalError = "Internal server error";
-  static readonly serviceUnavailable = "Service temporarily unavailable";
-  static readonly networkUnavailable = "Network is unconnected";
-  static readonly timeout = "Connection is timeout";
-  static readonly invalidResponseFormat = "Unexpected response format";
-  static readonly databaseError = "Database error occurred";
-  static readonly unknownError = "Unknown error occurred";
+  static readonly badRequest = "入力内容に誤りがあります。";
+  static readonly unauthorized =
+    "認証に失敗しました。ログインし直してください。";
+  static readonly forbidden =
+    "この操作を行う権限がありません。管理者にお問い合わせください。";
+  static readonly notFound = "お探しのデータが見つかりませんでした。";
+  static readonly conflict =
+    "リクエストが競合しています。既に存在するデータか確認してください。";
+  static readonly internalError =
+    "サーバーでエラーが発生しました。時間を置いて再試行してください。";
+  static readonly serviceUnavailable =
+    "現在サービスを利用できません。時間を置いて再試行してください。";
+  static readonly networkUnavailable =
+    "ネットワークに接続できません。インターネット接続を確認してください。";
+  static readonly serverUnreachable =
+    "サーバーに接続できません。時間を置いて再試行してください。";
+  static readonly timeout =
+    "サーバーの応答がありません。時間を置いて再試行してください。";
+  static readonly invalidResponseFormat = "サーバーからのデータが不正です。";
+  static readonly databaseError =
+    "データベースでエラーが発生しました。時間を置いて再試行してください。";
+  static readonly unknownError =
+    "予期しないエラーが発生しました。サポートにお問い合わせください。";
 }
 
 // HTTPエラークラス
@@ -47,6 +58,9 @@ export class HttpError {
   });
   static readonly networkUnavailable = new HttpErr({
     message: ErrMessages.networkUnavailable,
+  });
+  static readonly serverUnreachable = new HttpErr({
+    message: ErrMessages.serverUnreachable,
   });
   static readonly timeout = new HttpErr({ message: ErrMessages.timeout });
   static readonly invalidResponseFormat = new HttpErr({

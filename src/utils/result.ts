@@ -11,10 +11,3 @@ export class Result<T, E> {
     return this.data !== undefined && this.error === undefined;
   }
 }
-
-// 使用例
-const successResult = new Result({ data: "Success Data" });
-console.log(successResult.isSuccess); // true
-
-const errorResult = new Result({ error: "Error Message" });
-console.log(errorResult.isSuccess); // false

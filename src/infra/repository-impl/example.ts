@@ -51,11 +51,21 @@ export class HelloWorldRepositoryImpl implements HelloWorldRepository {
         });
       }
     } catch (error: unknown) {
-      if (error instanceof Error && error.message.includes("Network Error")) {
+      if (!navigator.onLine) {
         // ネットワークエラーの場合
         return new Result<HelloWorld, HttpErr>({
           data: undefined,
           error: HttpError.networkUnavailable,
+        });
+      } else if (
+        isAxiosError(error) &&
+        (error.code === "ECONNREFUSED" || // サーバーがダウン
+          error.code === "ENOTFOUND" || // DNS 解決失敗
+          error.message.includes("Network Error")) // CORS や DNS 失敗
+      ) {
+        return new Result<HelloWorld, HttpErr>({
+          data: undefined,
+          error: HttpError.serverUnreachable,
         });
       } else if (isAxiosError(error) && error.code === "ECONNABORTED") {
         // タイムアウトの場合（axiosのタイムアウトエラーの例）

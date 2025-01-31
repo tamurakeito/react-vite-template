@@ -13,6 +13,7 @@ import {
 import { setToast, toastTypes } from "@organisms/toast";
 import { useAuthContext } from "@providers/auth-provider";
 import { useApiContext } from "@providers/api-provider";
+import { HttpError } from "@domain/errors";
 
 export const SignUp = () => {
   const idRef = useRef<HTMLInputElement | null>(null);
@@ -69,7 +70,15 @@ export const SignUp = () => {
       setToast("アカウントが登録されました", toastTypes.success);
       navigate("/");
     } else {
-      setToast("アカウントが登録できませんでした", toastTypes.error);
+      const err = result.error;
+      if (err == HttpError.notFound) {
+        setToast("既に利用させているユーザー名です。", toastTypes.error);
+      } else {
+        setToast(
+          result.error ? result.error?.message : HttpError.unknownError.message,
+          toastTypes.error
+        );
+      }
     }
     setIsLoading(false);
     return;
