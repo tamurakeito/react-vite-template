@@ -1,17 +1,18 @@
-import "reflect-metadata";
-import "@/injector/container";
 import { BrowserRouter } from "react-router-dom";
 import { RouteSelector } from "./routes";
 import { Toast } from "./organisms/toast";
 import { AuthContextProvider } from "@/view/providers/auth-provider";
+import { ApiContextProvider } from "./providers/api-provider";
 
 const App = () => {
   return (
     <BrowserRouter>
-      <AuthContextProvider>
-        <Toast />
-        <RouteSelector />
-      </AuthContextProvider>
+      <ApiContextProvider>
+        <AuthContextProvider>
+          <Toast />
+          <RouteSelector />
+        </AuthContextProvider>
+      </ApiContextProvider>
     </BrowserRouter>
   );
 };

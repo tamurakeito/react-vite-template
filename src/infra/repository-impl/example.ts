@@ -2,13 +2,18 @@ import { HelloWorld } from "@/domain/entity/example";
 import { HelloWorldRepository } from "@/domain/repository/example";
 import { HttpErr, HttpError } from "@/domain/errors";
 import { Result } from "@/utils/result";
-import { client } from "@/infra/axios";
+import { AxiosInstance, isAxiosError } from "axios";
 
 export class HelloWorldRepositoryImpl implements HelloWorldRepository {
+  private client: AxiosInstance;
+  constructor(client: AxiosInstance) {
+    this.client = client;
+  }
+
   async helloWorldDetail(id: number): Promise<Result<HelloWorld, HttpErr>> {
     try {
       const url = `/hello-world/${id}`;
-      const response = await client.get(url);
+      const response = await this.client.get(url);
       if (response.status === 200) {
         return new Result<HelloWorld, HttpErr>({
           data: response.data,
@@ -45,14 +50,14 @@ export class HelloWorldRepositoryImpl implements HelloWorldRepository {
           error: HttpError.unknownError,
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof Error && error.message.includes("Network Error")) {
         // ネットワークエラーの場合
         return new Result<HelloWorld, HttpErr>({
           data: undefined,
           error: HttpError.networkUnavailable,
         });
-      } else if (error.code === "ECONNABORTED") {
+      } else if (isAxiosError(error) && error.code === "ECONNABORTED") {
         // タイムアウトの場合（axiosのタイムアウトエラーの例）
         return new Result<HelloWorld, HttpErr>({
           data: undefined,

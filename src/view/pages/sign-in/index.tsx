@@ -13,8 +13,7 @@ import {
   textSizes,
 } from "tamurakeito-react-ui";
 import { useAuthContext } from "@/view/providers/auth-provider";
-import { AuthUsecase } from "@/usecase/auth";
-import { container } from "tsyringe";
+import { useApiContext } from "@/view/providers/api-provider";
 
 export const SignIn = () => {
   const idRef = useRef<HTMLInputElement | null>(null);
@@ -24,7 +23,7 @@ export const SignIn = () => {
   const { user, signIn, signOut } = useAuthContext();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const authUsecase = container.resolve(AuthUsecase);
+  const { authHandler } = useApiContext();
 
   useEffect(() => {
     idRef.current?.focus();
@@ -50,7 +49,7 @@ export const SignIn = () => {
       return;
     }
 
-    const result = await authUsecase.signIn({
+    const result = await authHandler.signIn({
       userId: id,
       password: pass,
     });
@@ -91,7 +90,7 @@ export const SignIn = () => {
           </Text>
         )}
       </div>
-      {!!!user ? (
+      {!user ? (
         <>
           <div className={classes.container}>
             <Input
@@ -100,19 +99,23 @@ export const SignIn = () => {
               placeholder={"ユーザーID"}
               onChange={(event) => setId(event.target.value)}
               onKeyDown={(event) => {
-                event.key === "Enter" && passRef.current?.focus();
+                if (event.key === "Enter") {
+                  passRef.current?.focus();
+                }
               }}
             />
           </div>
           <div className={classes.container}>
             <input
               ref={passRef}
-              type={"password"}
+              type="password"
               value={pass}
-              placeholder={"パスワード"}
+              placeholder="パスワード"
               onChange={(event) => setPass(event.target.value)}
               onKeyDown={(event) => {
-                event.key === "Enter" && handleSignIn();
+                if (event.key === "Enter") {
+                  handleSignIn();
+                }
               }}
             />
           </div>

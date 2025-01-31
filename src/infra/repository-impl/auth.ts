@@ -5,15 +5,20 @@ import {
   SignUpResponse,
 } from "@/domain/entity/auth";
 import { AuthRepository } from "@/domain/repository/auth";
-import { client } from "@/infra/axios";
 import { HttpErr, HttpError } from "@/domain/errors";
 import { Result } from "@/utils/result";
+import { AxiosInstance, isAxiosError } from "axios";
 
 export class AuthRepositoryImpl implements AuthRepository {
+  private client: AxiosInstance;
+  constructor(client: AxiosInstance) {
+    this.client = client;
+  }
+
   async signIn(data: SignInRequest): Promise<Result<SignInResponse, HttpErr>> {
     try {
       const url = "/sign-in";
-      const response = await client.post(url, data);
+      const response = await this.client.post(url, data);
       if (response.status === 200) {
         return new Result<SignInResponse, HttpErr>({
           data: response.data,
@@ -45,14 +50,14 @@ export class AuthRepositoryImpl implements AuthRepository {
           error: HttpError.unknownError,
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof Error && error.message.includes("Network Error")) {
         // ネットワークエラーの場合
         return new Result<SignInResponse, HttpErr>({
           data: undefined,
           error: HttpError.networkUnavailable,
         });
-      } else if (error.code === "ECONNABORTED") {
+      } else if (isAxiosError(error) && error.code === "ECONNABORTED") {
         // タイムアウトの場合（axiosのタイムアウトエラーの例）
         return new Result<SignInResponse, HttpErr>({
           data: undefined,
@@ -75,7 +80,7 @@ export class AuthRepositoryImpl implements AuthRepository {
   async signUp(data: SignUpRequest): Promise<Result<SignUpResponse, HttpErr>> {
     try {
       const url = "/sign-up";
-      const response = await client.post(url, data);
+      const response = await this.client.post(url, data);
       if (response.status === 200) {
         return new Result<SignInResponse, HttpErr>({
           data: response.data,
@@ -107,14 +112,14 @@ export class AuthRepositoryImpl implements AuthRepository {
           error: HttpError.unknownError,
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error instanceof Error && error.message.includes("Network Error")) {
         // ネットワークエラーの場合
         return new Result<SignInResponse, HttpErr>({
           data: undefined,
           error: HttpError.networkUnavailable,
         });
-      } else if (error.code === "ECONNABORTED") {
+      } else if (isAxiosError(error) && error.code === "ECONNABORTED") {
         // タイムアウトの場合（axiosのタイムアウトエラーの例）
         return new Result<SignInResponse, HttpErr>({
           data: undefined,

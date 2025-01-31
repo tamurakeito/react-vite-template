@@ -1,10 +1,10 @@
-export type Hello = {
+export interface Hello {
   id: number;
   name: string;
   tag: boolean;
-};
+}
 
-export type HelloWorld = {
+export interface HelloWorld {
   id: number;
   hello: Hello;
-};
+}

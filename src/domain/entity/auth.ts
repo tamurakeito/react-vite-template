@@ -1,31 +1,31 @@
-export type User = {
+export interface User {
   id: number;
   userId: string;
   name: string;
   session: number;
-};
+}
 
-export type SignInRequest = {
+export interface SignInRequest {
   userId: string;
   password: string;
-};
+}
 
-export type SignInResponse = {
+export interface SignInResponse {
   id: number;
   userId: string;
   name: string;
   token: string;
-};
+}
 
-export type SignUpRequest = {
+export interface SignUpRequest {
   userId: string;
   password: string;
   name: string;
-};
+}
 
-export type SignUpResponse = {
+export interface SignUpResponse {
   id: number;
   userId: string;
   name: string;
   token: string;
-};
+}

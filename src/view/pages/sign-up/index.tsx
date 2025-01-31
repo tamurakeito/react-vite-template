@@ -12,8 +12,7 @@ import {
 } from "tamurakeito-react-ui";
 import { setToast, toastTypes } from "@/view/organisms/toast";
 import { useAuthContext } from "@/view/providers/auth-provider";
-import { container } from "tsyringe";
-import { AuthUsecase } from "@/usecase/auth";
+import { useApiContext } from "@/view/providers/api-provider";
 
 export const SignUp = () => {
   const idRef = useRef<HTMLInputElement | null>(null);
@@ -22,10 +21,10 @@ export const SignUp = () => {
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [pass, setPass] = useState("");
-  const { signIn } = useAuthContext();
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const authUsecase = container.resolve(AuthUsecase);
+  const { signIn } = useAuthContext();
+  const { authHandler } = useApiContext();
+  const navigate = useNavigate();
 
   useEffect(() => {
     idRef.current?.focus();
@@ -55,7 +54,7 @@ export const SignUp = () => {
       return;
     }
 
-    const result = await authUsecase.signUp({
+    const result = await authHandler.signUp({
       userId: id,
       password: pass,
       name: name,
@@ -88,7 +87,7 @@ export const SignUp = () => {
           placeholder={"ユーザーID"}
           onChange={(event) => setId(event.target.value)}
           onKeyDown={(event) => {
-            event.key === "Enter" && nameRef.current?.focus();
+            if (event.key === "Enter") nameRef.current?.focus();
           }}
         />
       </div>
@@ -99,7 +98,7 @@ export const SignUp = () => {
           placeholder={"アカウント表示名"}
           onChange={(event) => setName(event.target.value)}
           onKeyDown={(event) => {
-            event.key === "Enter" && passRef.current?.focus();
+            if (event.key === "Enter") passRef.current?.focus();
           }}
         />
       </div>
@@ -111,7 +110,7 @@ export const SignUp = () => {
           placeholder={"パスワード"}
           onChange={(event) => setPass(event.target.value)}
           onKeyDown={(event) => {
-            event.key === "Enter" && handleSignUp();
+            if (event.key === "Enter") handleSignUp();
           }}
         />
       </div>

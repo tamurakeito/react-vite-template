@@ -3441,7 +3441,7 @@ __metadata:
     react-router-dom: "npm:^7.1.1"
     reflect-metadata: "npm:^0.2.2"
     sass: "npm:^1.83.4"
-    tamurakeito-react-ui: ../tamurakeito-react-ui
+    tamurakeito-react-ui: "npm:0.0.8"
     tsyringe: "npm:^4.8.0"
     typescript: "npm:~5.6.2"
     typescript-eslint: "npm:^8.18.2"
@@ -3912,10 +3912,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tamurakeito-react-ui@file:../tamurakeito-react-ui::locator=react-vite-template%40workspace%3A.":
-  version: 0.0.7
-  resolution: "tamurakeito-react-ui@file:../tamurakeito-react-ui#../tamurakeito-react-ui::hash=84b562&locator=react-vite-template%40workspace%3A."
-  checksum: 10c0/59e97969eb15b501aa1c5b099c5c47382992a8fa1753ef4196f58c648c85ef5388acaaa6eaff20701e3a25a22f129686e187366e76cdb291bbed1ba456318b36
+"tamurakeito-react-ui@npm:0.0.8":
+  version: 0.0.8
+  resolution: "tamurakeito-react-ui@npm:0.0.8"
+  checksum: 10c0/1d2dbdb8562d0c062fd18a7bc457df8a5fe19631fbf78538708db3d6b16365ec96cd8c70273a4e800b49f6e8b61c9ab612403fbae10462a3dc76d65acbb97486
   languageName: node
   linkType: hard
 

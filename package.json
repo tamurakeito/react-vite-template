@@ -31,7 +31,7 @@
     "json-server": "^0.17.3",
     "reflect-metadata": "^0.2.2",
     "sass": "^1.83.4",
-    "tamurakeito-react-ui": "../tamurakeito-react-ui",
+    "tamurakeito-react-ui": "0.0.8",
     "tsyringe": "^4.8.0",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",

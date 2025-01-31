@@ -51,14 +51,14 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     () => {
       // ログインしていない場合
       const userUser = user?.userId || undefined;
-      if (!!!userUser) {
+      if (!userUser) {
         signOut();
       }
 
       // セッション切れの場合
       const untilSessionExpire = 1440000; // １日分のミリ秒 // １日経過するとセッション切れとなる
       const userSession = user?.session || undefined;
-      if (!!!userSession || Date.now() - userSession > untilSessionExpire) {
+      if (!userSession || Date.now() - userSession > untilSessionExpire) {
         signOut();
       }
 
@@ -89,6 +89,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuthContext = (): AuthContextType => {
   return useContext(AuthContext);
 };

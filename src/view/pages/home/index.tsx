@@ -9,8 +9,7 @@ import {
   iconTypes,
 } from "tamurakeito-react-ui";
 import { setToast, toastTypes } from "@/view/organisms/toast";
-import { container } from "tsyringe";
-import { HelloWorldUsecase } from "@/usecase/example";
+import { useApiContext } from "@/view/providers/api-provider";
 
 export const Home = () => {
   return (
@@ -27,10 +26,11 @@ export const Home = () => {
 
 const HelloWorldButton = ({ id }: { id: number }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const handleHelloworld = async (id: number) => {
+  const { helloWorldHandler } = useApiContext();
+
+  const handleHelloWorld = async (id: number) => {
     await setIsLoading(true);
-    const helloWorldUsecase = container.resolve(HelloWorldUsecase);
-    const result = await helloWorldUsecase.fetchHelloWorldDetail(id);
+    const result = await helloWorldHandler?.helloWorldDetail(id);
     if (result.isSuccess) {
       const data = result.data;
       setToast(`${data!.id}: ${data!.hello.name}`, toastTypes.success);
@@ -44,7 +44,7 @@ const HelloWorldButton = ({ id }: { id: number }) => {
     <Button
       className={classes.button}
       disabled={isLoading}
-      onClick={() => handleHelloworld(id)}
+      onClick={() => handleHelloWorld(id)}
     >
       {!isLoading ? `id: ${id}` : <Icon size={16} type={iconTypes.loading} />}
     </Button>
