@@ -2,9 +2,9 @@ import React, { ReactNode, useContext, useEffect } from "react";
 import useLocalStorage, {
   tokenStorageKey,
   userStorageKey,
-} from "@/view/hooks/useLocalStrage";
+} from "@hooks/useLocalStrage";
 import { useNavigate } from "react-router-dom";
-import { User } from "@/domain/entity/auth";
+import { User } from "@domain/entity/auth";
 
 type AuthContextType = {
   user?: User;

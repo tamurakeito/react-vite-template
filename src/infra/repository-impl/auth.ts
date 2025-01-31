@@ -3,10 +3,10 @@ import {
   SignInResponse,
   SignUpRequest,
   SignUpResponse,
-} from "@/domain/entity/auth";
-import { AuthRepository } from "@/domain/repository/auth";
-import { HttpErr, HttpError } from "@/domain/errors";
-import { Result } from "@/utils/result";
+} from "@domain/entity/auth";
+import { AuthRepository } from "@domain/repository/auth";
+import { HttpErr, HttpError } from "@domain/errors";
+import { Result } from "@utils/result";
 import { AxiosInstance, isAxiosError } from "axios";
 
 export class AuthRepositoryImpl implements AuthRepository {

@@ -25,7 +25,19 @@
     /* 追加 */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@domain/*": ["./src/domain/*"],
+      "@handler/*": ["./src/handler/*"],
+      "@infra/*": ["./src/infra/*"],
+      "@injector/*": ["./src/injector/*"],
+      "@types/*": ["./src/types/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@view/*": ["./src/view/*"],
+      "@assets/*": ["./src/view/assets/*"],
+      "@hooks/*": ["./src/view/hooks/*"],
+      "@organisms/*": ["./src/view/organisms/*"],
+      "@pages/*": ["./src/view/pages/*"],
+      "@providers/*": ["./src/view/providers/*"],
+      "@routes/*": ["./src/view/routes/*"]
     },
     "experimentalDecorators": true, // デコレーターの有効化
     "emitDecoratorMetadata": true // メタデータの生成 (DIで必要)

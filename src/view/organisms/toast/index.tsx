@@ -36,6 +36,7 @@ export const Toast = () => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const setToast = (message: string, type?: ToastTypes) => {
   switch (type) {
     case toastTypes.success:
@@ -50,6 +51,7 @@ export const setToast = (message: string, type?: ToastTypes) => {
   }
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const toastTypes = {
   default: "default",
   success: "success",

@@ -10,9 +10,9 @@ import {
   Text,
   textSizes,
 } from "tamurakeito-react-ui";
-import { setToast, toastTypes } from "@/view/organisms/toast";
-import { useAuthContext } from "@/view/providers/auth-provider";
-import { useApiContext } from "@/view/providers/api-provider";
+import { setToast, toastTypes } from "@organisms/toast";
+import { useAuthContext } from "@providers/auth-provider";
+import { useApiContext } from "@providers/api-provider";
 
 export const SignUp = () => {
   const idRef = useRef<HTMLInputElement | null>(null);

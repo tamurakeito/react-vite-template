@@ -1,5 +1,5 @@
 import axios from "axios";
-import { tokenStorageKey } from "@/view/hooks/useLocalStrage";
+import { tokenStorageKey } from "@hooks/useLocalStrage";
 
 export const client = axios.create({
   // baseURL: process.env.REACT_APP_AXIOS_BASE_URL,

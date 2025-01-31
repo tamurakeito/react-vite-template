@@ -1,8 +1,8 @@
 import React, { ReactNode, useContext } from "react";
-import { HelloWorldInjector } from "@/injector/example";
-import { HelloWorldHandler } from "@/handler/example";
-import { AuthHandler } from "@/handler/auth";
-import { AuthInjector } from "@/injector/auth";
+import { HelloWorldInjector } from "@injector/example";
+import { HelloWorldHandler } from "@handler/example";
+import { AuthHandler } from "@handler/auth";
+import { AuthInjector } from "@injector/auth";
 
 type ApiContextType = {
   helloWorldHandler: HelloWorldHandler;

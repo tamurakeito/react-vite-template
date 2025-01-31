@@ -8,8 +8,8 @@ import {
   Icon,
   iconTypes,
 } from "tamurakeito-react-ui";
-import { setToast, toastTypes } from "@/view/organisms/toast";
-import { useApiContext } from "@/view/providers/api-provider";
+import { setToast, toastTypes } from "@organisms/toast";
+import { useApiContext } from "@providers/api-provider";
 
 export const Home = () => {
   return (

@@ -1,7 +1,7 @@
-import { AuthRepository } from "@/domain/repository/auth";
-import { AuthHandler } from "@/handler/auth";
-import { client } from "@/infra/axios";
-import { AuthRepositoryImpl } from "@/infra/repository-impl/auth";
+import { AuthRepository } from "@domain/repository/auth";
+import { AuthHandler } from "@handler/auth";
+import { client } from "@infra/axios";
+import { AuthRepositoryImpl } from "@infra/repository-impl/auth";
 
 export class AuthInjector {
   static injectAuthRepository(): AuthRepository {

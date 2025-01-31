@@ -3,9 +3,9 @@ import {
   SignInResponse,
   SignUpRequest,
   SignUpResponse,
-} from "@/domain/entity/auth";
-import { Result } from "@/utils/result";
-import { HttpErr } from "@/domain/errors";
+} from "@domain/entity/auth";
+import { Result } from "@utils/result";
+import { HttpErr } from "@domain/errors";
 
 export interface AuthRepository {
   signIn(data: SignInRequest): Promise<Result<SignInResponse, HttpErr>>;

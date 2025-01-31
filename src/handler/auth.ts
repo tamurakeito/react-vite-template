@@ -3,10 +3,10 @@ import {
   SignInResponse,
   SignUpRequest,
   SignUpResponse,
-} from "@/domain/entity/auth";
-import { HttpErr } from "@/domain/errors";
-import { AuthRepository } from "@/domain/repository/auth";
-import { Result } from "@/utils/result";
+} from "@domain/entity/auth";
+import { HttpErr } from "@domain/errors";
+import { AuthRepository } from "@domain/repository/auth";
+import { Result } from "@utils/result";
 
 export class AuthHandler {
   private repository: AuthRepository;

@@ -1,7 +1,7 @@
-import { HelloWorld } from "@/domain/entity/example";
-import { HelloWorldRepository } from "@/domain/repository/example";
-import { HttpErr, HttpError } from "@/domain/errors";
-import { Result } from "@/utils/result";
+import { HelloWorld } from "@domain/entity/example";
+import { HelloWorldRepository } from "@domain/repository/example";
+import { HttpErr, HttpError } from "@domain/errors";
+import { Result } from "@utils/result";
 import { AxiosInstance, isAxiosError } from "axios";
 
 export class HelloWorldRepositoryImpl implements HelloWorldRepository {

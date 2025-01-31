@@ -1,7 +1,7 @@
-import { HelloWorld } from "@/domain/entity/example";
-import { HttpErr } from "@/domain/errors";
-import { HelloWorldRepository } from "@/domain/repository/example";
-import { Result } from "@/utils/result";
+import { HelloWorld } from "@domain/entity/example";
+import { HttpErr } from "@domain/errors";
+import { HelloWorldRepository } from "@domain/repository/example";
+import { Result } from "@utils/result";
 
 export class HelloWorldHandler {
   private repository: HelloWorldRepository;

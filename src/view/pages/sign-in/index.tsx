@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import classes from "./styles.module.scss";
-import { setToast, toastTypes } from "@/view/organisms/toast";
+import { setToast, toastTypes } from "@organisms/toast";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -12,8 +12,8 @@ import {
   textColors,
   textSizes,
 } from "tamurakeito-react-ui";
-import { useAuthContext } from "@/view/providers/auth-provider";
-import { useApiContext } from "@/view/providers/api-provider";
+import { useAuthContext } from "@providers/auth-provider";
+import { useApiContext } from "@providers/api-provider";
 
 export const SignIn = () => {
   const idRef = useRef<HTMLInputElement | null>(null);
