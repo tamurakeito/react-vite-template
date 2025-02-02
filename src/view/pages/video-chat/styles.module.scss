@@ -1,0 +1,56 @@
+@use "@assets/scss/config/variables" as var;
+
+.video_chat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #202124;
+  padding: 20px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 640px;
+  margin: auto;
+
+  .video_grid {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .local_video,
+  .remote_video {
+    border-radius: 10px;
+    background: black;
+  }
+
+  .local_video {
+    width: 40%;
+    max-width: 200px;
+  }
+
+  .remote_video {
+    width: 55%;
+    max-width: 320px;
+  }
+
+  .controls {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  .control_btn {
+    background: #3c4043;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    font-size: 20px;
+    color: white;
+    cursor: pointer;
+  }
+
+  .control_btn.end_call {
+    background: #ea4335;
+  }
+}
