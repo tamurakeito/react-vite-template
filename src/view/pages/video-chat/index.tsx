@@ -1,21 +1,30 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import classes from "./styles.module.scss";
-import { Center } from "tamurakeito-react-ui";
-import classNames from "classnames";
+import { Center, Text, buttonSizes, textColors } from "tamurakeito-react-ui";
+import { CircleButton } from "./circle-button";
+import { LogOut, Mic, MicOff, Video, VideoOff } from "react-feather";
 
 export const VideoChat = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
-
-  // const [remoteSDP, setRemoteSDP] = useState<string>("");
-  // const [localSDP, setLocalSDP] = useState<string>("");
-
   const clientId = useRef<string>(crypto.randomUUID());
+
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const [isRemoteVideoReady, setIsRemoteVideoReady] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isCameraOff, setIsCameraOff] = useState(false);
 
   // リモートSDP設定前に送られたICE候補を一時的に保存するバッファ
   const candidateBuffer: RTCIceCandidate[] = [];
+
+  useEffect(() => {
+    const handleResize = () => setScreenWidth(window.innerWidth);
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const createPeerConnection = () => {
     // STUNサーバー設定
@@ -26,6 +35,8 @@ export const VideoChat = () => {
 
     // リモートストリームを取得
     peerConnection.ontrack = (event) => {
+      setIsRemoteVideoReady(true);
+      console.log("remote video is ready!");
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = event.streams[0];
       }
@@ -42,6 +53,13 @@ export const VideoChat = () => {
           })
         );
       }
+    };
+
+    peerConnection.onconnectionstatechange = () => {
+      setIsRemoteVideoReady(
+        peerConnection.connectionState !== "disconnected" &&
+          peerConnection.connectionState !== "failed"
+      );
     };
 
     return peerConnection;
@@ -181,31 +199,61 @@ export const VideoChat = () => {
   }, []);
 
   return (
-    <Center className={classes.video_chat}>
-      <div className={classes.video_grid}>
-        <video
-          ref={localVideoRef}
-          className={classes.local_video}
-          autoPlay
-          playsInline
-          muted
-          // style={{ width: "100%", maxWidth: "480px" }}
-        />
-        <video
-          ref={remoteVideoRef}
-          className={classes.remote_video}
-          autoPlay
-          playsInline
-          // style={{ width: "45%" }}
-        />
-      </div>
+    <div
+      className={classes.video_chat}
+      style={{ width: screenWidth, height: screenWidth * 0.6 }}
+    >
+      <video
+        ref={localVideoRef}
+        className={classes.local_video}
+        autoPlay
+        playsInline
+        muted
+        style={{ display: !isCameraOff ? "block" : "none" }}
+      />
+      {isCameraOff && (
+        <Center className={classes.local_cameraoff}>
+          <Text color={textColors.white}>画面オフ</Text>
+        </Center>
+      )}
+      <video
+        ref={remoteVideoRef}
+        className={classes.remote_video}
+        autoPlay
+        playsInline
+        style={{ display: isRemoteVideoReady ? "block" : "none" }}
+      />
+      {!isRemoteVideoReady && (
+        <Center className={classes.remote_standby}>
+          <Text color={textColors.white}>接続されるまで少々お待ちください</Text>
+        </Center>
+      )}
+      {isMuted && (
+        <div className={classes.mute_icon}>
+          <MicOff size={24} color={"grey"} />
+        </div>
+      )}
       <div className={classes.controls}>
-        <button className={classes.control_btn}>🎤</button>
-        <button className={classes.control_btn}>📷</button>
-        <button className={classNames([classes.control_btn, classes.end_call])}>
-          ☎️
-        </button>
+        <CircleButton
+          size={buttonSizes.md}
+          onClick={() => {
+            setIsMuted(!isMuted);
+          }}
+        >
+          {!isMuted ? <MicOff /> : <Mic />}
+        </CircleButton>
+        <CircleButton
+          size={buttonSizes.md}
+          onClick={() => {
+            setIsCameraOff(!isCameraOff);
+          }}
+        >
+          {!isCameraOff ? <VideoOff /> : <Video />}
+        </CircleButton>
+        <CircleButton size={buttonSizes.md} disabled={!isRemoteVideoReady}>
+          <LogOut />
+        </CircleButton>
       </div>
-    </Center>
+    </div>
   );
 };

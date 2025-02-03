@@ -1,0 +1,94 @@
+@use "./functions";
+@use "./variables" as var;
+
+// media query
+// Desktop: @include media(">desktop")
+// Tablet: @include media(">mobile", "<desktop")
+// Mobile: @include media("<mobile")
+@mixin media($args...) {
+  $query: "";
+  @each $arg in $args {
+    $op: "";
+    @if ($query != "") {
+      $op: " and ";
+    }
+    $query: $query + $op + functions.translate-media-condition($arg);
+  }
+  @media #{$query} {
+    @content;
+  }
+}
+
+// Responsive Appearance
+@mixin hideIfCompactMode {
+  @include media("<desktop") {
+    display: none;
+  }
+}
+@mixin hideIfDesktopMode {
+  @include media(">=desktop") {
+    display: none;
+  }
+}
+
+@mixin btnVariant--white {
+  background-color: var.$WHITE;
+  color: var.$GRAY_700;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  border-color: var.$GRAY_400;
+
+  &:hover {
+    background-color: var.$GRAY_300;
+  }
+
+  &:focus {
+    background-color: var.$WHITE;
+    box-shadow: 0 0 0 2px var.$GRAY_400;
+  }
+
+  &--disabled {
+    opacity: 0.4;
+  }
+}
+
+@mixin btn--md {
+  border-radius: var.$CORNER_MD;
+  padding: 0 5 * var.$SPACE_DELTA;
+  min-height: 14 * var.$SPACE_DELTA;
+  // jp
+  font-weight: var.$FONT_WEIGHT_TEXT;
+  font-size: 16px;
+}
+
+@mixin text--sm--jp {
+  font-weight: var.$FONT_WEIGHT_TEXT;
+  font-size: var.$FONT_SIZE_TEXT_JP_SM;
+}
+
+@mixin text--h3--jp {
+  font-weight: var.$FONT_WEIGHT_HEADLINE;
+  font-size: var.$FONT_SIZE_HEADLINE_JP_H3;
+}
+
+@mixin text--h4--jp {
+  font-weight: var.$FONT_WEIGHT_HEADLINE;
+  font-size: var.$FONT_SIZE_HEADLINE_JP_H4;
+}
+
+@mixin text--h5--jp {
+  font-weight: var.$FONT_WEIGHT_HEADLINE;
+  font-size: var.$FONT_SIZE_HEADLINE_JP_H5;
+}
+
+@mixin text--h6--jp {
+  font-weight: var.$FONT_WEIGHT_HEADLINE;
+  font-size: var.$FONT_SIZE_HEADLINE_JP_H6;
+}
+
+@mixin relative--center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
