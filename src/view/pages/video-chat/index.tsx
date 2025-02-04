@@ -43,9 +43,6 @@ export const VideoChat = () => {
       // 2 = HTMLVideoElement.HAVE_CURRENT_DATA: 少なくとも1フレーム以上描出されている
       if (video.readyState >= 2) {
         setIsLocalVideoRendered(true);
-        console.log("ビデオが描画されました");
-      } else {
-        console.log("まだビデオが描画されていません");
       }
     };
 
@@ -192,7 +189,7 @@ export const VideoChat = () => {
     }
   };
 
-  const StartChat = () => {
+  const startCall = () => {
     startLocalStream();
 
     const socket = new WebSocket("ws://localhost:8081/ws");
@@ -232,6 +229,15 @@ export const VideoChat = () => {
     };
   };
 
+  const endCall = () => {
+    const peerConnection = peerConnectionRef.current;
+    if (peerConnection) {
+      const streams = peerConnection.getSenders().map((sender) => sender.track);
+      streams.forEach((track) => track?.stop());
+      peerConnection.close();
+    }
+  };
+
   return (
     <div
       className={classes.video_chat}
@@ -241,7 +247,7 @@ export const VideoChat = () => {
         <Center className={classes.chat_standby}>
           <Button
             onClick={() => {
-              StartChat();
+              startCall();
               setIsChatReady(true);
             }}
           >
@@ -258,12 +264,12 @@ export const VideoChat = () => {
         style={{ display: !isCameraOff ? "block" : "none" }}
       />
       {!isLocalVideoRendered && (
-        <Center className={classes.local_cameraoff}>
-          <Spinner />
+        <Center className={classes.local_standby}>
+          <Spinner size={16} />
         </Center>
       )}
       {isCameraOff && (
-        <Center className={classes.local_cameraoff}>
+        <Center className={classes.local_standby}>
           <Text color={textColors.white}>画面オフ</Text>
         </Center>
       )}
@@ -301,7 +307,13 @@ export const VideoChat = () => {
         >
           {!isCameraOff ? <VideoOff /> : <Video />}
         </CircleButton>
-        <CircleButton size={buttonSizes.md} disabled={!isRemoteVideoReady}>
+        <CircleButton
+          size={buttonSizes.md}
+          disabled={!isRemoteVideoReady}
+          onClick={() => {
+            endCall();
+          }}
+        >
           <LogOut />
         </CircleButton>
       </div>
