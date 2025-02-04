@@ -131,7 +131,6 @@ export const VideoChat = () => {
 
       // SDPを送信
       if (socketRef.current) {
-        console.log("offer送信");
         socketRef.current.send(
           JSON.stringify({
             type: "offer",
@@ -179,11 +178,9 @@ export const VideoChat = () => {
         dataChannelRef.current = event.channel;
         recieveMessage();
       };
-      console.log("client B として受信しました");
 
       // SDPを送信
       if (socketRef.current) {
-        console.log("answer送信");
         socketRef.current.send(
           JSON.stringify({
             type: "answer",
@@ -222,10 +219,8 @@ export const VideoChat = () => {
       if (message.clientId === clientId.current) return;
 
       if (message.type === "offer") {
-        console.log("offer 受信");
         handleRemoteSDP(message.sdp, "offer");
       } else if (message.type === "answer") {
-        console.log("answer 受信");
         handleRemoteSDP(message.sdp, "answer");
       } else if (message.type === "candidate") {
         handleNewICECandidate(message.data);
@@ -401,8 +396,8 @@ const ChatNode = ({
 }) => {
   return (
     <div className={classNames([classes.chat_node])}>
-      <Text color={isSender ? textColors.gray500 : textColors.gray100}>
-        {children}
+      <Text color={isSender ? textColors.white : textColors.gray100}>
+        {isSender ? "あなた" : "相手"}: {children}
       </Text>
     </div>
   );
