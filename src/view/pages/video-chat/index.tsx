@@ -1,8 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import classes from "./styles.module.scss";
-import { Center, Text, buttonSizes, textColors } from "tamurakeito-react-ui";
+import {
+  Button,
+  Center,
+  Text,
+  buttonSizes,
+  textColors,
+} from "tamurakeito-react-ui";
 import { CircleButton } from "./circle-button";
 import { LogOut, Mic, MicOff, Video, VideoOff } from "react-feather";
+import Spinner from "./spinner";
 
 export const VideoChat = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -12,7 +19,9 @@ export const VideoChat = () => {
   const clientId = useRef<string>(crypto.randomUUID());
 
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const [isChatReady, setIsChatReady] = useState(false);
   const [isRemoteVideoReady, setIsRemoteVideoReady] = useState(false);
+  const [isLocalVideoRendered, setIsLocalVideoRendered] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isCameraOff, setIsCameraOff] = useState(false);
 
@@ -24,6 +33,31 @@ export const VideoChat = () => {
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const video = localVideoRef.current;
+    if (!video) return;
+
+    const checkVideoRendered = () => {
+      // 2 = HTMLVideoElement.HAVE_CURRENT_DATA: 少なくとも1フレーム以上描出されている
+      if (video.readyState >= 2) {
+        setIsLocalVideoRendered(true);
+        console.log("ビデオが描画されました");
+      } else {
+        console.log("まだビデオが描画されていません");
+      }
+    };
+
+    // 既に準備できていれば即時チェック
+    checkVideoRendered();
+
+    // `canplay` イベントで再チェック
+    video.addEventListener("canplay", checkVideoRendered);
+
+    return () => {
+      video.removeEventListener("canplay", checkVideoRendered);
+    };
   }, []);
 
   const createPeerConnection = () => {
@@ -158,7 +192,7 @@ export const VideoChat = () => {
     }
   };
 
-  useEffect(() => {
+  const StartChat = () => {
     startLocalStream();
 
     const socket = new WebSocket("ws://localhost:8081/ws");
@@ -196,13 +230,25 @@ export const VideoChat = () => {
         peerConnectionRef.current.close();
       }
     };
-  }, []);
+  };
 
   return (
     <div
       className={classes.video_chat}
       style={{ width: screenWidth, height: screenWidth * 0.6 }}
     >
+      {!isChatReady && (
+        <Center className={classes.chat_standby}>
+          <Button
+            onClick={() => {
+              StartChat();
+              setIsChatReady(true);
+            }}
+          >
+            <Text color={textColors.white}>ビデオ通話を開始します</Text>
+          </Button>
+        </Center>
+      )}
       <video
         ref={localVideoRef}
         className={classes.local_video}
@@ -211,6 +257,11 @@ export const VideoChat = () => {
         muted
         style={{ display: !isCameraOff ? "block" : "none" }}
       />
+      {!isLocalVideoRendered && (
+        <Center className={classes.local_cameraoff}>
+          <Spinner />
+        </Center>
+      )}
       {isCameraOff && (
         <Center className={classes.local_cameraoff}>
           <Text color={textColors.white}>画面オフ</Text>
