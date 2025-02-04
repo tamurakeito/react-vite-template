@@ -6,7 +6,7 @@
   max-height: 720px;
   margin: 25px auto;
 
-  .chat_standby,
+  .video_standby,
   .local_video,
   .local_standby,
   .remote_video,
@@ -16,7 +16,7 @@
     object-fit: cover;
   }
 
-  .chat_standby {
+  .video_standby {
     z-index: 3;
     left: 0;
     width: 100%;
@@ -66,5 +66,20 @@
     gap: 16px;
     justify-content: center;
     width: 100%;
+  }
+
+  .chat_area {
+    position: absolute;
+    z-index: 1;
+    left: 10px;
+    max-width: 250px;
+    height: 100%;
+    // background: var.$SHADOW;
+  }
+}
+
+.chat_node {
+  &.sender {
+    color: yellowgreen;
   }
 }
