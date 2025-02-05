@@ -11,7 +11,6 @@ import {
 import { CircleButton } from "./circle-button";
 import { LogOut, Mic, MicOff, Video, VideoOff } from "react-feather";
 import Spinner from "./spinner";
-import classNames from "classnames";
 
 export const VideoChat = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -32,6 +31,23 @@ export const VideoChat = () => {
 
   // リモートSDP設定前に送られたICE候補を一時的に保存するバッファ
   const candidateBuffer: RTCIceCandidate[] = [];
+
+  const resetState = () => {
+    peerConnectionRef.current = null;
+    dataChannelRef.current = null;
+    socketRef.current = null;
+    clientId.current = crypto.randomUUID();
+
+    setIsVideoReady(false);
+    setIsRemoteVideoReady(false);
+    setIsLocalVideoRendered(false);
+    setIsMuted(false);
+    setIsCameraOff(false);
+    setMessage("");
+    setChatArray([]);
+
+    candidateBuffer.length = 0;
+  };
 
   useEffect(() => {
     const handleResize = () => setScreenWidth(window.innerWidth);
@@ -71,10 +87,13 @@ export const VideoChat = () => {
 
     // リモートストリームを取得
     peerConnection.ontrack = (event) => {
-      setIsRemoteVideoReady(true);
       console.log("remote video is ready!");
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = event.streams[0];
+
+        remoteVideoRef.current.onloadeddata = () => {
+          setIsRemoteVideoReady(true);
+        };
       }
     };
 
@@ -123,7 +142,7 @@ export const VideoChat = () => {
       // データチャネルを作成
       dataChannelRef.current =
         peerConnection.createDataChannel("myDataChannel");
-      recieveMessage();
+      receiveMessage();
 
       // SDPの生成
       const offer = await peerConnection.createOffer();
@@ -176,7 +195,7 @@ export const VideoChat = () => {
       // 受信したデータチャネルに置き換える
       peerConnection.ondatachannel = (event) => {
         dataChannelRef.current = event.channel;
-        recieveMessage();
+        receiveMessage();
       };
 
       // SDPを送信
@@ -192,7 +211,7 @@ export const VideoChat = () => {
     }
   };
 
-  const handleNewICECandidate = async (candidate: RTCIceCandidate) => {
+  const handleICECandidate = async (candidate: RTCIceCandidate) => {
     if (peerConnectionRef.current?.remoteDescription) {
       await peerConnectionRef.current.addIceCandidate(candidate);
     } else {
@@ -223,7 +242,7 @@ export const VideoChat = () => {
       } else if (message.type === "answer") {
         handleRemoteSDP(message.sdp, "answer");
       } else if (message.type === "candidate") {
-        handleNewICECandidate(message.data);
+        handleICECandidate(message.data);
       }
     };
 
@@ -239,13 +258,25 @@ export const VideoChat = () => {
     };
   };
 
-  const endCall = () => {
+  const closePeerConnection = async () => {
     const peerConnection = peerConnectionRef.current;
     if (peerConnection) {
       const streams = peerConnection.getSenders().map((sender) => sender.track);
       streams.forEach((track) => track?.stop());
-      peerConnection.close();
+      await peerConnection.close();
+      resetState();
     }
+  };
+
+  const endCall = () => {
+    if (
+      dataChannelRef.current &&
+      dataChannelRef.current.readyState === "open"
+    ) {
+      // ✅ PeerConnection 終了通知を P2P で送信
+      dataChannelRef.current.send(JSON.stringify({ type: "disconnect" }));
+    }
+    closePeerConnection();
   };
 
   // 任意のメッセージをdataChannelを経由して送信する
@@ -254,7 +285,9 @@ export const VideoChat = () => {
       dataChannelRef.current &&
       dataChannelRef.current.readyState === "open"
     ) {
-      dataChannelRef.current.send(message);
+      dataChannelRef.current.send(
+        JSON.stringify({ type: "chat", text: message })
+      );
       setChatArray((prev) => [
         ...prev,
         <ChatNode isSender={true}>{message}</ChatNode>,
@@ -264,16 +297,25 @@ export const VideoChat = () => {
     }
   };
 
-  const recieveMessage = () => {
+  const receiveMessage = () => {
     const dataChannel = dataChannelRef.current;
 
     if (!dataChannel) return;
 
     dataChannel.onmessage = (event: MessageEvent) => {
-      setChatArray((prev) => [
-        ...prev,
-        <ChatNode isSender={false}>{event.data}</ChatNode>,
-      ]);
+      const message = JSON.parse(event.data);
+      if (message.type === "chat") {
+        console.log(event.data);
+        setChatArray((prev) => [
+          ...prev,
+          <ChatNode isSender={false}>{message.text}</ChatNode>,
+        ]);
+      } else if (message.type === "disconnect") {
+        setIsVideoReady(false);
+        closePeerConnection();
+      } else {
+        console.log(event.data);
+      }
     };
 
     // クリーンアップ: dataChannel が変更されたら古いリスナーを削除
@@ -395,9 +437,11 @@ const ChatNode = ({
   isSender: boolean;
 }) => {
   return (
-    <div className={classNames([classes.chat_node])}>
-      <Text color={isSender ? textColors.white : textColors.gray100}>
-        {isSender ? "あなた" : "相手"}: {children}
+    <div className={classes.chat_node}>
+      <Text color={isSender ? textColors.gray300 : textColors.white}>
+        {isSender ? "あなた" : "相手"}
+        {" >> "}
+        {children}
       </Text>
     </div>
   );
