@@ -35,6 +35,10 @@
     background: var.$BLACK;
   }
 
+  .local_video {
+    transform: scaleX(-1);
+  }
+
   .remote_video,
   .remote_standby {
     left: 0;
@@ -51,10 +55,17 @@
     z-index: 1;
   }
 
-  .mute_icon {
+  .local_mute_icon {
     position: absolute;
     z-index: 3;
     top: 32px;
+    right: 32px;
+  }
+
+  .remote_mute_icon {
+    position: absolute;
+    z-index: 3;
+    bottom: 32px;
     right: 32px;
   }
 

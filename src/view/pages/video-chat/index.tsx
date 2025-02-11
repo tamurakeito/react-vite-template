@@ -24,8 +24,10 @@ export const VideoChat = () => {
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [isRemoteVideoReady, setIsRemoteVideoReady] = useState(false);
   const [isLocalVideoRendered, setIsLocalVideoRendered] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [isCameraOff, setIsCameraOff] = useState(false);
+  const [isLocalMuted, setIsLocalMuted] = useState(false);
+  const [isLocalCameraOff, setIsLocalCameraOff] = useState(false);
+  const [isRemoteMuted, setIsRemoteMuted] = useState(false);
+  const [isRemoteCameraOff, setIsRemoteCameraOff] = useState(false);
   const [message, setMessage] = useState("");
   const [chatArray, setChatArray] = useState<Array<ReactNode>>([]);
 
@@ -41,8 +43,8 @@ export const VideoChat = () => {
     setIsVideoReady(false);
     setIsRemoteVideoReady(false);
     setIsLocalVideoRendered(false);
-    setIsMuted(false);
-    setIsCameraOff(false);
+    setIsLocalMuted(false);
+    setIsLocalCameraOff(false);
     setMessage("");
     setChatArray([]);
 
@@ -220,6 +222,15 @@ export const VideoChat = () => {
     }
   };
 
+  const sendDataChannelMessage = (type: "video" | "audio", value: any) => {
+    if (
+      dataChannelRef.current &&
+      dataChannelRef.current.readyState === "open"
+    ) {
+      dataChannelRef.current.send(JSON.stringify({ type, value }));
+    }
+  };
+
   const startCall = () => {
     startLocalStream();
 
@@ -279,6 +290,36 @@ export const VideoChat = () => {
     closePeerConnection();
   };
 
+  const toggleCamera = () => {
+    setIsLocalCameraOff((prev) => {
+      const newValue = !prev;
+      const stream = localVideoRef.current?.srcObject as MediaStream;
+      if (stream) {
+        const videoTrack = stream.getVideoTracks()[0];
+        if (videoTrack) {
+          videoTrack.enabled = !newValue;
+        }
+      }
+      sendDataChannelMessage("video", !newValue);
+      return newValue;
+    });
+  };
+
+  const toggleMute = () => {
+    setIsLocalMuted((prev) => {
+      const newValue = !prev;
+      const stream = localVideoRef.current?.srcObject as MediaStream;
+      if (stream) {
+        const audioTrack = stream.getAudioTracks()[0];
+        if (audioTrack) {
+          audioTrack.enabled = !newValue;
+        }
+      }
+      sendDataChannelMessage("audio", !newValue);
+      return newValue;
+    });
+  };
+
   // 任意のメッセージをdataChannelを経由して送信する
   const sendMessage = (message: string) => {
     if (
@@ -305,7 +346,6 @@ export const VideoChat = () => {
     dataChannel.onmessage = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
       if (message.type === "chat") {
-        console.log(event.data);
         setChatArray((prev) => [
           ...prev,
           <ChatNode isSender={false}>{message.text}</ChatNode>,
@@ -313,8 +353,10 @@ export const VideoChat = () => {
       } else if (message.type === "disconnect") {
         setIsVideoReady(false);
         closePeerConnection();
-      } else {
-        console.log(event.data);
+      } else if (message.type === "video") {
+        setIsRemoteCameraOff(!message.value);
+      } else if (message.type === "audio") {
+        setIsRemoteMuted(!message.value);
       }
     };
 
@@ -348,16 +390,16 @@ export const VideoChat = () => {
           autoPlay
           playsInline
           muted
-          style={{ display: !isCameraOff ? "block" : "none" }}
+          style={{ display: !isLocalCameraOff ? "block" : "none" }}
         />
         {!isLocalVideoRendered && (
           <Center className={classes.local_standby}>
             <Spinner size={16} />
           </Center>
         )}
-        {isCameraOff && (
+        {isLocalCameraOff && (
           <Center className={classes.local_standby}>
-            <Text color={textColors.white}>画面オフ</Text>
+            <Text color={textColors.white}>カメラオフ</Text>
           </Center>
         )}
         <video
@@ -365,7 +407,10 @@ export const VideoChat = () => {
           className={classes.remote_video}
           autoPlay
           playsInline
-          style={{ display: isRemoteVideoReady ? "block" : "none" }}
+          style={{
+            display:
+              isRemoteVideoReady && !isRemoteCameraOff ? "block" : "none",
+          }}
         />
         {!isRemoteVideoReady && (
           <Center className={classes.remote_standby}>
@@ -374,27 +419,27 @@ export const VideoChat = () => {
             </Text>
           </Center>
         )}
-        {isMuted && (
-          <div className={classes.mute_icon}>
+        {isRemoteCameraOff && (
+          <Center className={classes.remote_standby}>
+            <Text color={textColors.white}>相手がカメラをオフにしました</Text>
+          </Center>
+        )}
+        {isLocalMuted && (
+          <div className={classes.local_mute_icon}>
+            <MicOff size={24} color={"grey"} />
+          </div>
+        )}
+        {isRemoteMuted && (
+          <div className={classes.remote_mute_icon}>
             <MicOff size={24} color={"grey"} />
           </div>
         )}
         <div className={classes.controls}>
-          <CircleButton
-            size={circleButtonSizes.md}
-            onClick={() => {
-              setIsMuted(!isMuted);
-            }}
-          >
-            {!isMuted ? <MicOff /> : <Mic />}
+          <CircleButton size={circleButtonSizes.md} onClick={toggleMute}>
+            {!isLocalMuted ? <MicOff /> : <Mic />}
           </CircleButton>
-          <CircleButton
-            size={circleButtonSizes.md}
-            onClick={() => {
-              setIsCameraOff(!isCameraOff);
-            }}
-          >
-            {!isCameraOff ? <VideoOff /> : <Video />}
+          <CircleButton size={circleButtonSizes.md} onClick={toggleCamera}>
+            {!isLocalCameraOff ? <VideoOff /> : <Video />}
           </CircleButton>
           <CircleButton
             size={circleButtonSizes.md}
