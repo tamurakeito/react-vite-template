@@ -24,9 +24,9 @@ export const VideoChat = () => {
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [isRemoteVideoReady, setIsRemoteVideoReady] = useState(false);
   const [isLocalVideoRendered, setIsLocalVideoRendered] = useState(false);
-  const [isLocalMuted, setIsLocalMuted] = useState(false);
+  const [isLocalMicOff, setIsLocalMicOff] = useState(false);
   const [isLocalCameraOff, setIsLocalCameraOff] = useState(false);
-  const [isRemoteMuted, setIsRemoteMuted] = useState(false);
+  const [isRemoteMicOff, setIsRemoteMicOff] = useState(false);
   const [isRemoteCameraOff, setIsRemoteCameraOff] = useState(false);
   const [message, setMessage] = useState("");
   const [chatArray, setChatArray] = useState<Array<ReactNode>>([]);
@@ -43,7 +43,7 @@ export const VideoChat = () => {
     setIsVideoReady(false);
     setIsRemoteVideoReady(false);
     setIsLocalVideoRendered(false);
-    setIsLocalMuted(false);
+    setIsLocalMicOff(false);
     setIsLocalCameraOff(false);
     setMessage("");
     setChatArray([]);
@@ -305,8 +305,8 @@ export const VideoChat = () => {
     });
   };
 
-  const toggleMute = () => {
-    setIsLocalMuted((prev) => {
+  const toggleMic = () => {
+    setIsLocalMicOff((prev) => {
       const newValue = !prev;
       const stream = localVideoRef.current?.srcObject as MediaStream;
       if (stream) {
@@ -356,7 +356,7 @@ export const VideoChat = () => {
       } else if (message.type === "video") {
         setIsRemoteCameraOff(!message.value);
       } else if (message.type === "audio") {
-        setIsRemoteMuted(!message.value);
+        setIsRemoteMicOff(!message.value);
       }
     };
 
@@ -424,19 +424,19 @@ export const VideoChat = () => {
             <Text color={textColors.white}>相手がカメラをオフにしました</Text>
           </Center>
         )}
-        {isLocalMuted && (
-          <div className={classes.local_mute_icon}>
+        {isLocalMicOff && (
+          <div className={classes.local_micoff_icon}>
             <MicOff size={24} color={"grey"} />
           </div>
         )}
-        {isRemoteMuted && (
-          <div className={classes.remote_mute_icon}>
+        {isRemoteMicOff && (
+          <div className={classes.remote_micoff_icon}>
             <MicOff size={24} color={"grey"} />
           </div>
         )}
         <div className={classes.controls}>
-          <CircleButton size={circleButtonSizes.md} onClick={toggleMute}>
-            {!isLocalMuted ? <MicOff /> : <Mic />}
+          <CircleButton size={circleButtonSizes.md} onClick={toggleMic}>
+            {!isLocalMicOff ? <MicOff /> : <Mic />}
           </CircleButton>
           <CircleButton size={circleButtonSizes.md} onClick={toggleCamera}>
             {!isLocalCameraOff ? <VideoOff /> : <Video />}
