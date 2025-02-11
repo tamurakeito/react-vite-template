@@ -3,14 +3,14 @@ import classes from "./styles.module.scss";
 import {
   Button,
   Center,
+  CircleButton,
   Input,
+  Spinner,
   Text,
-  buttonSizes,
+  circleButtonSizes,
   textColors,
 } from "tamurakeito-react-ui";
-import { CircleButton } from "./circle-button";
 import { LogOut, Mic, MicOff, Video, VideoOff } from "react-feather";
-import Spinner from "./spinner";
 
 export const VideoChat = () => {
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -381,7 +381,7 @@ export const VideoChat = () => {
         )}
         <div className={classes.controls}>
           <CircleButton
-            size={buttonSizes.md}
+            size={circleButtonSizes.md}
             onClick={() => {
               setIsMuted(!isMuted);
             }}
@@ -389,7 +389,7 @@ export const VideoChat = () => {
             {!isMuted ? <MicOff /> : <Mic />}
           </CircleButton>
           <CircleButton
-            size={buttonSizes.md}
+            size={circleButtonSizes.md}
             onClick={() => {
               setIsCameraOff(!isCameraOff);
             }}
@@ -397,7 +397,7 @@ export const VideoChat = () => {
             {!isCameraOff ? <VideoOff /> : <Video />}
           </CircleButton>
           <CircleButton
-            size={buttonSizes.md}
+            size={circleButtonSizes.md}
             disabled={!isRemoteVideoReady}
             onClick={() => {
               endCall();
